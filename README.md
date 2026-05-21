@@ -48,8 +48,8 @@ fintech-gabon/
 
 ```bash
 # 1. Cloner le dépôt
-git clone https://github.com/VOTRE-COMPTE/fintech-gabon.git
-cd fintech-gabon
+git clone https://github.com/FINTECH241/fintech-backend.git
+cd fintech-backend
 
 # 2. Créer un environnement virtuel
 python -m venv venv
