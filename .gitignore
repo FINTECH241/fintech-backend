@@ -1,0 +1,38 @@
+# ===== Secrets & environnement =====
+# NE JAMAIS commiter le fichier .env (contient mots de passe, clés API)
+.env
+*.env
+!.env.example
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+venv/
+env/
+.venv/
+
+# ===== Base de données =====
+*.sqlite3
+*.db
+
+# ===== Données générées =====
+data/*.csv
+data/*.json
+!data/.gitkeep
+
+# ===== IDE & OS =====
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ===== Logs =====
+*.log
+logs/
+
+# ===== Tests & couverture =====
+.pytest_cache/
+.coverage
+htmlcov/
