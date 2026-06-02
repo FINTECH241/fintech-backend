@@ -194,13 +194,15 @@ def generer_credits(clients, transactions):
         # Tirage au sort : le client a-t-il fait défaut ?
         a_fait_defaut = 1 if random.random() < proba_defaut else 0
 
+        date_demande = (datetime.now() - timedelta(days=random.randint(0, 180))).strftime("%Y-%m-%d")
+
         credits.append({
             "credit_id": credit_id,
             "client_id": cid,
             "montant_demande_fcfa": montant,
             "duree_mois": random.choice([3, 6, 9, 12]),
-            "nb_transactions_30j": nb_tx,
-            "a_fait_defaut": a_fait_defaut,   # <-- CIBLE pour l'IA
+            "date_demande": date_demande,
+            "a_fait_defaut": a_fait_defaut,
         })
         credit_id += 1
     return credits
