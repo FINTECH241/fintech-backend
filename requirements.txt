@@ -1,0 +1,25 @@
+# ===== API & serveur =====
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# ===== Base de données =====
+sqlalchemy==2.0.36
+psycopg2-binary==2.9.10
+alembic==1.14.0
+
+# ===== Configuration & validation =====
+pydantic==2.10.4
+pydantic-settings==2.7.0
+python-dotenv==1.0.1
+
+# ===== Sécurité =====
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+
+# ===== Génération de données simulées =====
+faker==33.1.0
+pandas==2.2.3
+numpy==2.2.1
+
+# ===== IA / Scoring (préparation) =====
+scikit-learn==1.6.0
