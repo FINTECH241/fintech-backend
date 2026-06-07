@@ -35,7 +35,7 @@ client = TestClient(app)
 
 PHONE = "+24101234567"
 
-# Petite image PNG 1x1 pixel encodée en base64 (simuler une pièce d'identité)
+
 FAKE_ID_IMAGE_B64 = base64.b64encode(
     b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01"
     b"\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00"
@@ -208,14 +208,13 @@ def test_upload_id_document_missing_image(auth_headers):
 
 
 def test_correct_ocr_fields_and_confirm(auth_headers):
-    """L'utilisateur peut corriger les champs OCR avant confirmation."""
-    # 1. Upload initial
+    
     client.post(
         "/api/v1/kyc/document",
         json={"image_b64": FAKE_ID_IMAGE_B64, "document_type": "CNI"},
         headers=auth_headers,
     )
-    # 2. Correction + confirmation
+    
     r = client.patch(
         "/api/v1/kyc/document",
         json={"first_name": "Marie-Claire", "last_name": "NGUEMA"},
@@ -261,7 +260,7 @@ def test_selfie_match_below_threshold(auth_headers, mock_external_services):
         json={"selfie_b64": FAKE_SELFIE_B64},
         headers=auth_headers,
     )
-    # Rejet direct ou mise en file manuelle selon le seuil configuré
+   
     assert r.status_code in (200, 202)
     data = r.json()
     assert data.get("kyc_status") in ("rejected", "pending_review")
@@ -285,11 +284,11 @@ def test_selfie_liveness_failed(auth_headers, mock_external_services):
 
 def test_selfie_requires_document_upload_first(auth_headers, mock_external_services):
     """Le selfie ne peut pas être soumis sans avoir d'abord uploadé la pièce d'identité."""
-    # Simuler un utilisateur sans pièce uploadée
+    
     mock_external_services["ocr"].return_value = None
 
     new_phone = "+24109999999"
-    # Créer rapidement un 2e utilisateur sans KYC document
+    
     with patch("app.services.otp_service._get_redis", return_value=MagicMock(
         get=lambda k: None, setex=lambda k, s, v: None,
         delete=lambda k: None, incr=lambda k: 1, expire=lambda k, s: None,
@@ -328,7 +327,7 @@ def test_selfie_requires_auth():
 @pytest.fixture(scope="module")
 def admin_headers():
     """Retourne les headers d'un utilisateur admin."""
-    # À adapter selon la logique de rôle de l'application
+    
     admin_phone = "+24100000001"
 
     with patch("app.services.otp_service._get_redis", return_value=MagicMock(
@@ -350,7 +349,7 @@ def _push_to_review_queue(auth_headers, mock_external_services):
     """Place un dossier en zone grise (score intermédiaire)."""
     mock_external_services["smile"].return_value = {
         "match": True,
-        "confidence": 0.65,   # zone grise : ni rejeté ni validé automatiquement
+        "confidence": 0.65,   
         "liveness_passed": True,
     }
     client.post(
@@ -363,7 +362,7 @@ def _push_to_review_queue(auth_headers, mock_external_services):
         json={"selfie_b64": FAKE_SELFIE_B64},
         headers=auth_headers,
     )
-    assert r.status_code == 202  # Mis en file d'attente
+    assert r.status_code == 202  
     return r.json().get("kyc_id")
 
 
@@ -394,7 +393,7 @@ def test_admin_approve_dossier(auth_headers, admin_headers, mock_external_servic
     assert r.status_code == 200
     data = r.json()
     assert data["kyc_status"] == "verified"
-    # La décision doit être tracée
+   
     assert "decided_by" in data
     assert "decided_at" in data
     assert "reason" in data
@@ -447,8 +446,8 @@ def test_admin_decision_traces_who_decided(auth_headers, admin_headers, mock_ext
         headers=admin_headers,
     )
     data = r.json()
-    assert data["decided_by"] is not None    # identifiant de l'admin
-    assert data["decided_at"] is not None    # timestamp ISO 8601
+    assert data["decided_by"] is not None    
+    assert data["decided_at"] is not None    
     assert data["reason"] == "Vérification manuelle OK."
 
 
@@ -477,7 +476,7 @@ def test_user_notified_after_admin_decision(auth_headers, admin_headers, mock_ex
         json={"decision": "approved", "reason": "OK."},
         headers=admin_headers,
     )
-    # L'utilisateur peut consulter son statut KYC mis à jour
+   
     r = client.get("/api/v1/kyc/status", headers=auth_headers)
     assert r.status_code == 200
     assert r.json()["kyc_status"] == "verified"
@@ -487,7 +486,7 @@ def test_user_notified_after_admin_decision(auth_headers, admin_headers, mock_ex
 
 def test_kyc_status_pending_before_submission(auth_headers):
     """Avant toute soumission KYC, le statut est 'pending'."""
-    # Créer un utilisateur frais sans KYC
+   
     fresh_phone = "+24108888888"
     with patch("app.services.otp_service._get_redis", return_value=MagicMock(
         get=lambda k: None, setex=lambda k, s, v: None,
